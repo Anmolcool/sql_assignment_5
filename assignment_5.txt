@@ -1,0 +1,80 @@
+use assignment_1;
+
+-- EID NAME CITY DOJ DEPT DESI SALARY OF THE DELHI EMPLOYEES
+
+select *from emp;
+select *from emp_sal;
+
+-- inner join (1.) EID NAME CITY DOJ DEPT DESI SALARY OF THE DELHI EMPLOYEES
+
+select emp.EID, emp.city, emp.doj, emp_sal.dept, emp_sal.desi, emp_sal.salary from emp
+inner join emp_sal
+on emp.EID = emp_sal.EID
+where lower(emp.city) = 'delhi';
+
+-- (2.)DETAILS OF ALL THE EMPLOYEES WHOSE SALARY DETAILS ARE NOT AVAILABLE.
+
+select *from emp
+inner join emp_sal
+on emp.EID = emp_sal.EID
+where salary is null;
+
+-- IN THE INVENTORY STRUCTURE DISPLAY  (Mini Project):
+
+-- 1) PID, PDESC, CATEGORY, SNAME, SCITY
+
+-- 2 ) DISPLAY OID , ODATE , CNAME, CADDRESS, CPHONE, PDESC, PRICE,OQTY, AMT
+
+-- refering to excel file
+-- 1.> supplier 2.> product 3.> customers 4.> orders 5.> stock
+
+
+create table supplier(
+	SID varchar(10) PRIMARY KEY,
+    Sname varchar(30) NOT NULL,
+    Sadd varchar(30) NOT NULL,
+    Scity varchar(30) DEFAULT 'Delhi',
+    Sphone varchar(20) UNIQUE,
+	Email varchar(30)
+);
+
+
+create table product(
+	PID varchar(10) PRIMARY KEY, 
+	PDESC varchar(20) NOT NULL, 
+	CATEGORY varchar(10) CHECK (CATEGORY IN ('IT', 'HA', 'HC')), 
+	Price int CHECK (Price IN (Price > 0)), 
+	SID varchar(10) references supplier(SID)
+);
+
+create table customers(
+	CID varchar(10) PRIMARY KEY,
+    CNAME varchar(30) NOT NULL,
+    ADDRESS varchar(30) NOT NULL,
+    CITY varchar(20) NOT NULL,
+    PHONE varchar(10) NOT NULL,
+    EMAIL varchar(30) NOT NULL,
+    DOB date CHECK(DOB < '2000-01-01')
+);
+
+select *from product;
+select *from supplier;
+select *from customers;
+select *from orders;
+select *from stock;
+
+
+create table orders(
+	OID varchar(30) PRIMARY KEY,
+    ODATE VARCHAR(20),
+    CID VARCHAR(30) references customers(CID),
+    PID VARCHAR(30) references product(PID),
+    QTY INT CHECK(QTY >= 1)
+);
+
+create table stock(
+	PID varchar(10) references product(PID),
+    SQITY int CHECK(SQITY >= 0),
+    ROL int CHECK(ROL >= 0),
+    MOQ int CHECK(MOQ >= 5)
+);
